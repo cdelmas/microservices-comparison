@@ -1,1 +1,4 @@
 rootProject.name = 'spike-server'
+include 'restlet-server'
+include 'common'
+

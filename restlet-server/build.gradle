@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '1.2.2'
+}
+
+repositories {
+    maven {
+        url 'http://maven.restlet.org'
+    }
+}
+
+dependencies {
+    compile 'org.restlet.jse:org.restlet:2.3.4'
+    compile 'org.restlet.jse:org.restlet.ext.guice:2.3.4'
+    compile 'com.google.inject:guice:4.0'
+
+    runtime 'org.restlet.jse:org.restlet.ext.jackson:2.3.4'
+    runtime 'com.fasterxml.jackson.core:jackson-databind:2.4.5'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'io.github.cdelmas.spike.restlet.RestComponent'
+    }
+}

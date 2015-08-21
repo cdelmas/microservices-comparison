@@ -1,2 +1,5 @@
 *.iml
 .idea
+.gradle
+common/build
+restlet-server/build

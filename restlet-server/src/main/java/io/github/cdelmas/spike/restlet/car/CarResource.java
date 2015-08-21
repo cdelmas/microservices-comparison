@@ -1,8 +1,7 @@
 package io.github.cdelmas.spike.restlet.car;
 
-import io.github.cdelmas.spike.common.domain.*;
+import io.github.cdelmas.spike.common.domain.CarRepository;
 import io.github.cdelmas.spike.common.hateoas.Link;
-import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.restlet.resource.Get;
 import org.restlet.resource.ResourceException;

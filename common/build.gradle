@@ -1,0 +1,8 @@
+plugins {
+    id 'java'
+}
+
+dependencies {
+    compile 'com.restfb:restfb:1.14.0'
+    compile 'com.netflix.hystrix:hystrix-core:1.4.14'
+}

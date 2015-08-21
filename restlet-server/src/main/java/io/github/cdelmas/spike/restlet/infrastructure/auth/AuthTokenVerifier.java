@@ -27,10 +27,10 @@ public class AuthTokenVerifier implements Verifier {
                 .map(authUser ->
                                 authUser.map(u -> {
                                     request.getClientInfo().setUser(createRestletUser(u));
-                                    return RESULT_VALID;
-                                }).orElse(RESULT_INVALID)
+                                    return Verifier.RESULT_VALID;
+                                }).orElse(Verifier.RESULT_INVALID)
                 )
-                .orElse(RESULT_MISSING);
+                .orElse(Verifier.RESULT_MISSING);
     }
 
     private org.restlet.security.User createRestletUser(User user) {

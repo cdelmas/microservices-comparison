@@ -2,10 +2,10 @@ package io.github.cdelmas.spike.restlet;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import io.github.cdelmas.spike.restlet.hello.HelloModule;
 import io.github.cdelmas.spike.restlet.car.Car;
 import io.github.cdelmas.spike.restlet.car.CarModule;
 import io.github.cdelmas.spike.restlet.hello.Hello;
-import io.github.cdelmas.spike.restlet.hello.HelloModule;
 import io.github.cdelmas.spike.restlet.infrastructure.di.RestletInfraModule;
 import org.restlet.Application;
 import org.restlet.Component;

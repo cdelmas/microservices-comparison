@@ -1,8 +1,6 @@
 package io.github.cdelmas.spike.restlet.car;
 
-import io.github.cdelmas.spike.common.domain.*;
-import org.restlet.data.Header;
-import org.restlet.data.Reference;
+import io.github.cdelmas.spike.common.domain.CarRepository;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
