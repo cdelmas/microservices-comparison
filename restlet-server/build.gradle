@@ -1,5 +1,4 @@
 plugins {
-    id 'java'
     id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
 
@@ -20,6 +19,6 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'io.github.cdelmas.spike.restlet.RestComponent'
+        attributes 'Main-Class': 'io.github.cdelmas.spike.restlet.Main'
     }
 }

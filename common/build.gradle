@@ -1,6 +1,3 @@
-plugins {
-    id 'java'
-}
 
 dependencies {
     compile 'com.restfb:restfb:1.14.0'
