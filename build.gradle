@@ -40,3 +40,9 @@ project(':restlet-server') {
         compile project(':common')
     }
 }
+
+project(':dropwizard') {
+    dependencies {
+        compile project(':common')
+    }
+}

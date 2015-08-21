@@ -1,0 +1,13 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '1.2.2'
+}
+
+dependencies {
+    compile 'io.dropwizard:dropwizard-core:0.8.2'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'io.github.cdelmas.spike.dropwizard.Main'
+    }
+}

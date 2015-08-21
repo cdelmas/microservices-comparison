@@ -3,3 +3,4 @@
 .gradle
 common/build
 restlet-server/build
+dropwizard/build
