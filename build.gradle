@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '1.2.2'
+}
+
+group = 'io.github.cdelmas'
+version = '1.0'
+sourceCompatibility = 1.8
+
+repositories {
+    maven {
+        url 'http://maven.restlet.org'
+    }
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile 'com.javaslang:javaslang:1.2.2'
+
+    compile 'org.restlet.jse:org.restlet:2.3.4'
+    compile 'org.restlet.jse:org.restlet.ext.guice:2.3.4'
+    compile 'com.google.inject:guice:4.0'
+
+    compile 'com.restfb:restfb:1.14.0'
+    compile 'com.netflix.hystrix:hystrix-core:1.4.14'
+
+    runtime 'org.restlet.jse:org.restlet.ext.jackson:2.3.4'
+    runtime 'com.fasterxml.jackson.core:jackson-databind:2.4.5'
+    runtime 'ch.qos.logback:logback-classic:1.1.3'
+
+    testCompile 'org.mockito:mockito-all:1.9.5'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-core:1.3'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'io.github.cdelmas.spike.restlet.RestComponent'
+    }
+}
