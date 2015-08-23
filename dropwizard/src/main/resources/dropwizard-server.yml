@@ -1,0 +1,9 @@
+template: Hello, %s!
+defaultName: Stranger
+server:
+  applicationConnectors:
+    - type: https
+      port: 8443
+      keyStorePath: /home/cyril/Work/localhost.jks
+      keyStorePassword: louise
+      validateCerts: false
