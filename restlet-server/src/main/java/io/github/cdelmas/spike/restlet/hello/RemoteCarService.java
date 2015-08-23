@@ -18,9 +18,7 @@ public class RemoteCarService implements CarService {
     public List<Car> list() {
         Client client = new Client(new Context(), Protocol.HTTPS);
         Series<Parameter> parameters = client.getContext().getParameters();
-        parameters.add("truststorePath", "/home/cyril/Work/localhost.jks");
-        parameters.add("truststorePassword", "louise");
-        parameters.add("truststoreType", "JKS");
+        parameters.add("truststorePath", System.getProperty("javax.net.ssl.trustStorePath"));
 
         ClientResource clientResource = new ClientResource("https://localhost:8043/api/cars/cars");
         clientResource.setNext(client);

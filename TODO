@@ -4,8 +4,7 @@ TODO list
 	- add a README
 	- add a test client
 
-- restlet:
-	- remove hard-coded reference to the keystore and truststore (use system properties when possible)
+- restlet
 
 - dropwizard
 	- add Facebook auth

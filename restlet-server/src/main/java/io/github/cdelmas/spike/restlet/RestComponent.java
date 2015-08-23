@@ -23,10 +23,7 @@ public class RestComponent extends Component {
         Server secureServer = getServers().add(Protocol.HTTPS, 8043);
         Series<Parameter> parameters = secureServer.getContext().getParameters();
         parameters.add("sslContextFactory", "org.restlet.engine.ssl.DefaultSslContextFactory");
-        parameters.add("keyStorePath", "/home/cyril/Work/localhost.jks");
-        parameters.add("keyStorePassword", "louise");
-        parameters.add("keyPassword", "louise");
-        parameters.add("keyStoreType", "JKS");
+        parameters.add("keyStorePath", System.getProperty("javax.net.ssl.keyStorePath"));
         getDefaultHost().attach("/api/hello", secure(helloApp, authTokenVerifier, "Hello"));
         getDefaultHost().attach("/api/cars", secure(carApp, authTokenVerifier, "Cars"));
     }
