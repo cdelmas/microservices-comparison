@@ -1,0 +1,38 @@
+TODO list
+- restlet:
+	- remove hard-coded reference to the keystore and truststore (use system properties when possible)
+
+- dropwizard
+	- add Facebook auth
+
+- vertx
+	- add https server
+	- add dependency injection
+	- add rest resources
+	- add Location header
+	- add resource call
+	- add Facebook auth
+
+- spring boot
+	- add https server
+	- add dependency injection
+	- add rest resources
+	- add Location header
+	- add resource call
+	- add Facebook auth
+
+- simple framework
+	- add https server
+	- add dependency injection
+	- add rest resources
+	- add Location header
+	- add resource call
+	- add Facebook auth
+
+- spark
+	- add https server
+	- add dependency injection
+	- add rest resources
+	- add Location header
+	- add resource call
+	- add Facebook auth
