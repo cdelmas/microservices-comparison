@@ -1,4 +1,9 @@
 TODO list
+- common
+	- add a license file (Apache)
+	- add a README
+	- add a test client
+
 - restlet:
 	- remove hard-coded reference to the keystore and truststore (use system properties when possible)
 
@@ -36,3 +41,4 @@ TODO list
 	- add Location header
 	- add resource call
 	- add Facebook auth
+
