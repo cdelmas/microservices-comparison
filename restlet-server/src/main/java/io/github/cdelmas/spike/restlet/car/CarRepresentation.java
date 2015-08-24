@@ -22,6 +22,10 @@ public class CarRepresentation extends Representation {
     private int id;
     private String name;
 
+    CarRepresentation() {
+
+    }
+
     public CarRepresentation(io.github.cdelmas.spike.common.domain.Car car) {
         this.id = car.getId();
         this.name = car.getName();

@@ -41,6 +41,7 @@ public class CarResource extends ServerResource {
         io.github.cdelmas.spike.common.domain.Car car = carRepository.byId(carId).orElseThrow(() -> new ResourceException(Status.CLIENT_ERROR_NOT_FOUND));
         CarRepresentation carRepresentation = new CarRepresentation(car);
         carRepresentation.addLink(Link.self(getReference().toString()));
+        carRepresentation.addLink(Link.remove(getReference().toString()));
         return carRepresentation;
     }
 }

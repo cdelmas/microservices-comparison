@@ -16,6 +16,8 @@
 package io.github.cdelmas.spike.restlet.car;
 
 import io.github.cdelmas.spike.common.domain.CarRepository;
+import io.github.cdelmas.spike.common.hateoas.Link;
+import org.restlet.data.Reference;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
@@ -23,16 +25,22 @@ import org.restlet.resource.ServerResource;
 import javax.inject.Inject;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 public class CarsResource extends ServerResource {
 
     @Inject
     private CarRepository carRepository;
 
     @Get("json")
-    public List<io.github.cdelmas.spike.common.domain.Car> all() {
+    public List<CarRepresentation> all() {
         List<io.github.cdelmas.spike.common.domain.Car> cars = carRepository.all();
         getResponse().getHeaders().add("total-count", String.valueOf(cars.size()));
-        return cars;
+        return cars.stream().map(c -> {
+            CarRepresentation carRepresentation = new CarRepresentation(c);
+            carRepresentation.addLink(Link.self(new Reference(getReference()).addSegment(String.valueOf(c.getId())).toString()));
+            return carRepresentation;
+        }).collect(toList());
     }
 
     @Post("json")
