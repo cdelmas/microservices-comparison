@@ -1,6 +1,7 @@
 template: Hello, %s!
 defaultName: Stranger
 server:
+  applicationContextPath: /app
   applicationConnectors:
     - type: https
       port: 8443

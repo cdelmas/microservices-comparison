@@ -1,13 +1,15 @@
 TODO list
 - common
-	- add a license file (Apache)
 	- add a README
 	- add a test client
 
 - restlet
+	- add links in list representation
 
 - dropwizard
 	- add Facebook auth
+	- add links in representations
+	- add links in list representation
 
 - vertx
 	- add https server
@@ -16,6 +18,8 @@ TODO list
 	- add Location header
 	- add resource call
 	- add Facebook auth
+	- add links in representations
+	- add links in list representation
 
 - spring boot
 	- add https server
@@ -24,6 +28,8 @@ TODO list
 	- add Location header
 	- add resource call
 	- add Facebook auth
+	- add links in representations
+	- add links in list representation
 
 - simple framework
 	- add https server
@@ -32,6 +38,8 @@ TODO list
 	- add Location header
 	- add resource call
 	- add Facebook auth
+	- add links in representations
+	- add links in list representation
 
 - spark
 	- add https server
@@ -40,4 +48,7 @@ TODO list
 	- add Location header
 	- add resource call
 	- add Facebook auth
+	- add links in representations
+	- add links in list representation
+
 
