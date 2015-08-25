@@ -50,12 +50,11 @@ public class RestComponent extends Component {
     }
 
     private Restlet secure(Application app, Verifier verifier, String realm) {
-//        ChallengeAuthenticator guard = new ChallengeAuthenticator(getContext().createChildContext(),
-//                ChallengeScheme.CUSTOM, realm);
-//        guard.setVerifier(verifier);
-//        guard.setNext(app);
-//        return guard;
-        return app;
+        ChallengeAuthenticator guard = new ChallengeAuthenticator(getContext().createChildContext(),
+                ChallengeScheme.CUSTOM, realm);
+        guard.setVerifier(verifier);
+        guard.setNext(app);
+        return guard;
     }
 
     private static void replaceConverter(
