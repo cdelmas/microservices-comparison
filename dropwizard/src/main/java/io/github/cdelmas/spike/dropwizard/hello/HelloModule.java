@@ -22,9 +22,13 @@ import io.dropwizard.setup.Environment;
 import io.github.cdelmas.spike.dropwizard.infrastructure.DropwizardServerConfiguration;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.ws.rs.client.Client;
 
 public class HelloModule extends AbstractModule {
+
+    private Client client;
+
     @Override
     protected void configure() {
         bind(CarService.class).to(RemoteCarService.class);
@@ -44,6 +48,9 @@ public class HelloModule extends AbstractModule {
 
     @Provides
     public Client createHttpClient(Environment environment, DropwizardServerConfiguration configuration) {
-        return new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("toto le haricot");
+        if (client == null) {
+            client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("toto le haricot");
+        }
+        return client;
     }
 }
