@@ -7,8 +7,7 @@ TODO list
 
 - dropwizard
 	- add Facebook auth
-	- add links in representations
-	- add links in list representation
+	- corriger le problème d'appel de ressource HTTPS : client interne (module auth ? Autre ?)
 
 - vertx
 	- add https server
@@ -40,7 +39,7 @@ TODO list
 	- add links in representations
 	- add links in list representation
 
-- spark
+- sparkjava
 	- add https server
 	- add dependency injection
 	- add rest resources
