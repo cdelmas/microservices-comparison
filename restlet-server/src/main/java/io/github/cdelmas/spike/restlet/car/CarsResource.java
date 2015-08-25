@@ -18,6 +18,7 @@ package io.github.cdelmas.spike.restlet.car;
 import io.github.cdelmas.spike.common.domain.CarRepository;
 import io.github.cdelmas.spike.common.hateoas.Link;
 import org.restlet.data.Reference;
+import org.restlet.data.Status;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
@@ -47,6 +48,7 @@ public class CarsResource extends ServerResource {
     public void createCar(io.github.cdelmas.spike.common.domain.Car car) {
         carRepository.save(car);
         setLocationRef(getReference().addSegment(String.valueOf(car.getId())));
+        setStatus(Status.SUCCESS_CREATED);
     }
 
 }
