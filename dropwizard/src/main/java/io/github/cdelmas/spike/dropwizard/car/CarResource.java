@@ -24,15 +24,16 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.*;
 import java.net.URI;
 import java.util.Optional;
 
 @Path("/cars/{id}")
 @Produces(MediaType.APPLICATION_JSON)
 public class CarResource {
+
+    @Context
+    UriInfo uriInfo;
 
     @Inject
     private CarRepository carRepository;
@@ -42,8 +43,8 @@ public class CarResource {
         Optional<Car> car = carRepository.byId(carId);
         return car.map(c -> {
             CarRepresentation carRepresentation = new CarRepresentation(c);
-            carRepresentation.addLink(Link.self(UriBuilder.fromResource(CarResource.class).build(c.getId()).toString()));
-            return Response.ok(new CarRepresentation(c)).build();
+            carRepresentation.addLink(Link.self(uriInfo.getAbsolutePathBuilder().build(c.getId()).toString()));
+            return Response.ok(carRepresentation).build();
         }).orElse(Response.status(Response.Status.NOT_FOUND).build());
     }
 }

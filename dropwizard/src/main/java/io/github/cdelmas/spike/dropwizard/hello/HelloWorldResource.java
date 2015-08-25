@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static java.util.stream.Collectors.toList;
+
 @Path("/hello-world")
 @Produces(MediaType.APPLICATION_JSON)
 public class HelloWorldResource {
@@ -51,7 +53,8 @@ public class HelloWorldResource {
     public Saying sayHello(@QueryParam("name") Optional<String> name) {
         final String value = String.format(template, name.orElse(defaultName));
         List<Car> allCars = carService.getAllCars();
-        return new Saying(counter.incrementAndGet(), value + " " + '\n' + allCars.toString());
+        return new Saying(counter.incrementAndGet(), value + " " + '\n' +
+                allCars.stream().map(Car::getName).collect(toList()).toString());
     }
 
 }

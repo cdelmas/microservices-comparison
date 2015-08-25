@@ -19,14 +19,25 @@ import io.github.cdelmas.spike.common.domain.Car;
 import io.github.cdelmas.spike.common.domain.CarRepository;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Path("/cars")
 public class CarsResource {
+
+    @Context
+    UriInfo uriInfo;
 
     @Inject
     private CarRepository carRepository;
@@ -35,7 +46,13 @@ public class CarsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response all() {
         List<Car> cars = carRepository.all();
-        return Response.ok(cars)
+        List<CarRepresentation> representations = cars.stream()
+                .map(c -> {
+                    CarRepresentation representation = new CarRepresentation(c);
+                    representation.addLink(io.github.cdelmas.spike.common.hateoas.Link.self(uriInfo.getAbsolutePathBuilder().build(c.getId()).toString()));
+                    return representation;
+                }).collect(toList());
+        return Response.ok(representations)
                 .header("total-count", String.valueOf(cars.size()))
                 .build();
     }
@@ -44,8 +61,7 @@ public class CarsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createCar(Car car) {
         carRepository.save(car);
-        return Response.noContent()
-                .location(UriBuilder.fromResource(CarsResource.class).path("/{id}").build(String.valueOf(car.getId())))
+        return Response.created(UriBuilder.fromResource(CarsResource.class).path("/{id}").build(String.valueOf(car.getId())))
                 .build();
     }
 
