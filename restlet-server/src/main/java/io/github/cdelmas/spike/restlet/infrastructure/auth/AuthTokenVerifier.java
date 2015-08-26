@@ -17,13 +17,15 @@ package io.github.cdelmas.spike.restlet.infrastructure.auth;
 
 import io.github.cdelmas.spike.common.auth.AccessTokenVerificationCommandFactory;
 import io.github.cdelmas.spike.common.auth.User;
+import javaslang.control.Try;
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
+import org.restlet.data.ChallengeResponse;
+import org.restlet.data.ChallengeScheme;
 import org.restlet.security.Verifier;
 
 import javax.inject.Inject;
-import java.util.Optional;
 
 public class AuthTokenVerifier implements Verifier {
 
@@ -32,20 +34,32 @@ public class AuthTokenVerifier implements Verifier {
 
     @Override
     public int verify(Request request, Response response) {
-        Optional<String> accessToken = Optional.ofNullable(request.getHeaders().getFirstValue("fb-access-token", true));
+        final String token;
 
-        return accessToken
-                .map(t -> {
-                    Context.getCurrent().getAttributes().put("fb-access-token", t);
-                    return accessTokenVerificationCommandFactory.createVerificationCommand(t).executeCommand();
-                })
-                .map(authUser ->
-                                authUser.map(u -> {
-                                    request.getClientInfo().setUser(createRestletUser(u));
-                                    return Verifier.RESULT_VALID;
-                                }).orElse(Verifier.RESULT_INVALID)
-                )
-                .orElse(Verifier.RESULT_MISSING);
+        try {
+            ChallengeResponse cr = request.getChallengeResponse();
+            if (cr == null) {
+                return RESULT_MISSING;
+            } else if (ChallengeScheme.HTTP_OAUTH_BEARER.equals(cr.getScheme())) {
+                final String bearer = cr.getRawValue();
+                if (bearer == null || bearer.isEmpty()) {
+                    return RESULT_MISSING;
+                }
+                token = bearer;
+            } else {
+                return RESULT_UNSUPPORTED;
+            }
+        } catch (Exception ex) {
+            return RESULT_INVALID;
+        }
+
+        Try<User> user = accessTokenVerificationCommandFactory.createVerificationCommand(token).executeCommand();
+        return user.map(u -> {
+            org.restlet.security.User restletUser = createRestletUser(u);
+            request.getClientInfo().setUser(restletUser);
+            Context.getCurrent().getAttributes().put("fb-access-token", token);
+            return RESULT_VALID;
+        }).orElse(RESULT_INVALID);
     }
 
     private org.restlet.security.User createRestletUser(User user) {

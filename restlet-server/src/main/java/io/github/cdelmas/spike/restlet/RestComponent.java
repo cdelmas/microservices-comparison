@@ -44,14 +44,14 @@ public class RestComponent extends Component {
         Series<Parameter> parameters = secureServer.getContext().getParameters();
         parameters.add("sslContextFactory", "org.restlet.engine.ssl.DefaultSslContextFactory");
         parameters.add("keyStorePath", System.getProperty("javax.net.ssl.keyStorePath"));
-        getDefaultHost().attach("/api/hello", secure(helloApp, authTokenVerifier, "Hello"));
-        getDefaultHost().attach("/api/cars", secure(carApp, authTokenVerifier, "Cars"));
+        getDefaultHost().attach("/api/hello", secure(helloApp, authTokenVerifier, "ame"));
+        getDefaultHost().attach("/api/cars", secure(carApp, authTokenVerifier, "ame"));
         replaceConverter(JacksonConverter.class, new JacksonCustomConverter());
     }
 
     private Restlet secure(Application app, Verifier verifier, String realm) {
         ChallengeAuthenticator guard = new ChallengeAuthenticator(getContext().createChildContext(),
-                ChallengeScheme.CUSTOM, realm);
+                ChallengeScheme.HTTP_OAUTH_BEARER, realm);
         guard.setVerifier(verifier);
         guard.setNext(app);
         return guard;

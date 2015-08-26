@@ -4,20 +4,9 @@ TODO list
 	- add a test client
 
 - restlet
-
+	
 - dropwizard
 	- add Facebook auth
-	- corriger le problème d'appel de ressource HTTPS : client interne (module auth ? Autre ?)
-
-- vertx
-	- add https server
-	- add dependency injection
-	- add rest resources
-	- add Location header
-	- add resource call
-	- add Facebook auth
-	- add links in representations
-	- add links in list representation
 
 - spring boot
 	- add https server
@@ -29,7 +18,7 @@ TODO list
 	- add links in representations
 	- add links in list representation
 
-- simple framework
+- vertx
 	- add https server
 	- add dependency injection
 	- add rest resources
@@ -48,5 +37,4 @@ TODO list
 	- add Facebook auth
 	- add links in representations
 	- add links in list representation
-
 
