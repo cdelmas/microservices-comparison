@@ -6,7 +6,7 @@ TODO list
 - restlet
 	
 - dropwizard
-	- add Facebook auth
+	- add Facebook auth (test)
 
 - spring boot
 	- add https server
