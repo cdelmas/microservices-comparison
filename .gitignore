@@ -4,3 +4,7 @@
 common/build
 restlet-server/build
 dropwizard/build
+vertx/build
+springboot/build
+sparkjava/build
+build
