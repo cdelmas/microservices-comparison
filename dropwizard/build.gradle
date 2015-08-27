@@ -5,6 +5,7 @@ plugins {
 dependencies {
     compile 'io.dropwizard:dropwizard-core:0.8.2'
     compile 'io.dropwizard:dropwizard-client:0.8.2'
+    compile 'io.dropwizard:dropwizard-auth:0.8.2'
     compile 'io.dropwizard.modules:dropwizard-java8:0.8.0-2'
     compile 'com.hubspot.dropwizard:dropwizard-guice:0.8.1.2'
 }

@@ -15,6 +15,8 @@
 */
 package io.github.cdelmas.spike.dropwizard.car;
 
+import io.dropwizard.auth.Auth;
+import io.github.cdelmas.spike.common.auth.User;
 import io.github.cdelmas.spike.common.domain.Car;
 import io.github.cdelmas.spike.common.domain.CarRepository;
 import io.github.cdelmas.spike.common.hateoas.Link;
@@ -24,8 +26,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.*;
-import java.net.URI;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.util.Optional;
 
 @Path("/cars/{id}")
@@ -39,7 +43,7 @@ public class CarResource {
     private CarRepository carRepository;
 
     @GET
-    public Response byId(@PathParam("id") int carId) {
+    public Response byId(@Auth User user, @PathParam("id") int carId) {
         Optional<Car> car = carRepository.byId(carId);
         return car.map(c -> {
             CarRepresentation carRepresentation = new CarRepresentation(c);

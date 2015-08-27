@@ -15,6 +15,8 @@
 */
 package io.github.cdelmas.spike.dropwizard.car;
 
+import io.dropwizard.auth.Auth;
+import io.github.cdelmas.spike.common.auth.User;
 import io.github.cdelmas.spike.common.domain.Car;
 import io.github.cdelmas.spike.common.domain.CarRepository;
 
@@ -44,7 +46,7 @@ public class CarsResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response all() {
+    public Response all(@Auth User user) {
         List<Car> cars = carRepository.all();
         List<CarRepresentation> representations = cars.stream()
                 .map(c -> {
@@ -59,7 +61,7 @@ public class CarsResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createCar(Car car) {
+    public Response createCar(@Auth User user, Car car) {
         carRepository.save(car);
         return Response.created(UriBuilder.fromResource(CarsResource.class).path("/{id}").build(String.valueOf(car.getId())))
                 .build();

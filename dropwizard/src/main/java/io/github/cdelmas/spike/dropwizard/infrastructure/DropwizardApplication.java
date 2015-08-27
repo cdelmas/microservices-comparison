@@ -19,14 +19,18 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hubspot.dropwizard.guice.GuiceBundle;
 import io.dropwizard.Application;
+import io.dropwizard.auth.AuthFactory;
+import io.dropwizard.auth.oauth.OAuthFactory;
 import io.dropwizard.java8.Java8Bundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.github.cdelmas.spike.common.auth.User;
 import io.github.cdelmas.spike.dropwizard.car.CarModule;
 import io.github.cdelmas.spike.dropwizard.car.CarResource;
 import io.github.cdelmas.spike.dropwizard.car.CarsResource;
 import io.github.cdelmas.spike.dropwizard.hello.HelloModule;
 import io.github.cdelmas.spike.dropwizard.hello.HelloWorldResource;
+import io.github.cdelmas.spike.dropwizard.infrastructure.auth.FacebookTokenAuthenticator;
 
 public class DropwizardApplication extends Application<DropwizardServerConfiguration> {
 
@@ -38,6 +42,10 @@ public class DropwizardApplication extends Application<DropwizardServerConfigura
         environment.jersey().register(guiceBundle.getInjector().getInstance(HelloWorldResource.class));
         environment.jersey().register(guiceBundle.getInjector().getInstance(CarsResource.class));
         environment.jersey().register(guiceBundle.getInjector().getInstance(CarResource.class));
+        environment.jersey().register(AuthFactory.binder(
+                new OAuthFactory<User>(guiceBundle.getInjector().getInstance(FacebookTokenAuthenticator.class),
+                        getName() + "-Realm",
+                        User.class)));
     }
 
     @Override

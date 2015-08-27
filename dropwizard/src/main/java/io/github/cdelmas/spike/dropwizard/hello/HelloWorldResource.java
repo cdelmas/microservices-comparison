@@ -16,6 +16,8 @@
 package io.github.cdelmas.spike.dropwizard.hello;
 
 import com.codahale.metrics.annotation.Timed;
+import io.dropwizard.auth.Auth;
+import io.github.cdelmas.spike.common.auth.User;
 import io.github.cdelmas.spike.common.domain.Car;
 
 import javax.inject.Inject;
@@ -50,7 +52,7 @@ public class HelloWorldResource {
 
     @GET
     @Timed
-    public Saying sayHello(@QueryParam("name") Optional<String> name) {
+    public Saying sayHello(@Auth User user, @QueryParam("name") Optional<String> name) {
         final String value = String.format(template, name.orElse(defaultName));
         List<Car> allCars = carService.getAllCars();
         return new Saying(counter.incrementAndGet(), value + " " + '\n' +
