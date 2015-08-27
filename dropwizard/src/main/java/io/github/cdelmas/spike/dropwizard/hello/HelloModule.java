@@ -49,7 +49,7 @@ public class HelloModule extends AbstractModule {
     @Provides
     public Client createHttpClient(Environment environment, DropwizardServerConfiguration configuration) {
         if (client == null) {
-            client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("toto le haricot");
+            client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("internal client");
         }
         return client;
     }

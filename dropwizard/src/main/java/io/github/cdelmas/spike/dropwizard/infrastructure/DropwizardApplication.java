@@ -15,6 +15,8 @@
 */
 package io.github.cdelmas.spike.dropwizard.infrastructure;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hubspot.dropwizard.guice.GuiceBundle;
 import io.dropwizard.Application;
 import io.dropwizard.java8.Java8Bundle;
@@ -52,5 +54,8 @@ public class DropwizardApplication extends Application<DropwizardServerConfigura
                 .build();
         bootstrap.addBundle(guiceBundle);
         bootstrap.addBundle(new Java8Bundle());
+
+        ObjectMapper objectMapper = bootstrap.getObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 }
