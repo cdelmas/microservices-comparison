@@ -57,7 +57,7 @@ public class AuthTokenVerifier implements Verifier {
         return user.map(u -> {
             org.restlet.security.User restletUser = createRestletUser(u);
             request.getClientInfo().setUser(restletUser);
-            Context.getCurrent().getAttributes().put("fb-access-token", token);
+            request.getAttributes().put("token", token);
             return RESULT_VALID;
         }).orElse(RESULT_INVALID);
     }

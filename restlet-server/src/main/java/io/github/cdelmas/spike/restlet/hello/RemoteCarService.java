@@ -18,6 +18,7 @@ package io.github.cdelmas.spike.restlet.hello;
 import io.github.cdelmas.spike.common.domain.Car;
 import org.restlet.Client;
 import org.restlet.Context;
+import org.restlet.Request;
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.ChallengeScheme;
 import org.restlet.data.Parameter;
@@ -40,7 +41,7 @@ public class RemoteCarService implements CarService {
         ClientResource clientResource = new ClientResource("https://localhost:8043/api/cars/cars");
         clientResource.setNext(client);
         ChallengeResponse challenge = new ChallengeResponse(ChallengeScheme.HTTP_OAUTH_BEARER);
-        challenge.setRawValue(Context.getCurrent().getAttributes().getOrDefault("fb-access-token", "").toString());
+        challenge.setRawValue(Request.getCurrent().getAttributes().getOrDefault("token", "").toString());
         clientResource.setChallengeResponse(challenge);
         CarServiceInterface carServiceInterface = clientResource.wrap(CarServiceInterface.class);
         Car[] allCars = carServiceInterface.getAllCars();
