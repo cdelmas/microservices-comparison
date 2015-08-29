@@ -20,6 +20,7 @@ public class User {
     private final String id;
 
     private final String name;
+    private String token;
 
     public User(String id, String name) {
         this.id = id;
@@ -32,5 +33,13 @@ public class User {
 
     public String getName() {
         return name;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

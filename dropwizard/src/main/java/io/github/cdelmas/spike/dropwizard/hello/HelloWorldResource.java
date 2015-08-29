@@ -54,7 +54,7 @@ public class HelloWorldResource {
     @Timed
     public Saying sayHello(@Auth User user, @QueryParam("name") Optional<String> name) {
         final String value = String.format(template, name.orElse(defaultName));
-        List<Car> allCars = carService.getAllCars();
+        List<Car> allCars = carService.getAllCars(user.getToken());
         return new Saying(counter.incrementAndGet(), value + " " + '\n' +
                 allCars.stream().map(Car::getName).collect(toList()).toString());
     }

@@ -48,7 +48,9 @@ public class FacebookAccessTokenVerificationCommand extends HystrixCommand<Try<U
     }
 
     private User createUser(JsonObject fbu) {
-        return new User(fbu.getString("id"), fbu.getString("name"));
+        User user = new User(fbu.getString("id"), fbu.getString("name"));
+        user.setToken(accessToken);
+        return user;
     }
 
 }
