@@ -22,6 +22,8 @@ import io.github.cdelmas.spike.vertx.car.CarsResource;
 import io.github.cdelmas.spike.vertx.hello.HelloResource;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
+import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.net.JksOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
@@ -29,7 +31,13 @@ public class Main {
 
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
-        HttpServer server = vertx.createHttpServer();
+        HttpServerOptions serverOptions = new HttpServerOptions()
+                .setSsl(true)
+                .setKeyStoreOptions(new JksOptions()
+                        .setPath(System.getProperty("javax.net.ssl.keyStorePath"))
+                        .setPassword(System.getProperty("javax.net.ssl.keyStorePassword")))
+                .setPort(8090);
+        HttpServer server = vertx.createHttpServer(serverOptions);
         Router router = Router.router(vertx);
 
         HelloResource helloResource = new HelloResource();
@@ -44,6 +52,6 @@ public class Main {
         CarResource carResource = new CarResource(carRepository);
         router.get("/cars/:id").produces("application/json").handler(carResource::byId);
 
-        server.requestHandler(router::accept).listen(8090);
+        server.requestHandler(router::accept).listen();
     }
 }
