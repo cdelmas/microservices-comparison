@@ -18,14 +18,8 @@ TODO list
 	- add links in list representation
 
 - vertx
-	- add https server
-	- add dependency injection
-	- add rest resources
-	- add Location header
 	- add resource call
 	- add Facebook auth
-	- add links in representations
-	- add links in list representation
 
 - sparkjava
 	- add https server
