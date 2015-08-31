@@ -17,6 +17,7 @@ package io.github.cdelmas.spike.vertx;
 
 import io.github.cdelmas.spike.common.domain.CarRepository;
 import io.github.cdelmas.spike.common.persistence.InMemoryCarRepository;
+import io.github.cdelmas.spike.vertx.car.CarResource;
 import io.github.cdelmas.spike.vertx.car.CarsResource;
 import io.github.cdelmas.spike.vertx.hello.HelloResource;
 import io.vertx.core.Vertx;
@@ -29,25 +30,19 @@ public class Main {
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
         HttpServer server = vertx.createHttpServer();
-
         Router router = Router.router(vertx);
 
         HelloResource helloResource = new HelloResource();
-
         router.get("/hello").produces("text/plain").handler(helloResource::hello);
 
         CarRepository carRepository = new InMemoryCarRepository();
         CarsResource carsResource = new CarsResource(carRepository);
         router.route("/cars*").handler(BodyHandler.create());
         router.get("/cars").produces("application/json").handler(carsResource::all);
-
         router.post("/cars").consumes("application/json").handler(carsResource::create);
 
-        router.get("/cars/:id").produces("application/json").handler(
-                routingContext -> {
-
-                }
-        );
+        CarResource carResource = new CarResource(carRepository);
+        router.get("/cars/:id").produces("application/json").handler(carResource::byId);
 
         server.requestHandler(router::accept).listen(8090);
     }
