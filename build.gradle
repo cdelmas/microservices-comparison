@@ -35,3 +35,9 @@ project(':dropwizard') {
         compile project(':common')
     }
 }
+
+project(':vertx') {
+    dependencies {
+        compile project(':common')
+    }
+}

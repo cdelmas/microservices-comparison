@@ -3,7 +3,8 @@ plugins {
 }
 
 dependencies {
-
+    compile 'io.vertx:vertx-core:3.0.0'
+    compile 'io.vertx:vertx-web:3.0.0'
 }
 
 jar {
