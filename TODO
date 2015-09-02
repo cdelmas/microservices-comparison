@@ -18,10 +18,10 @@ TODO list
 	- add links in list representation
 
 - vertx
-	- add resource call
-	- add Facebook auth
+	- add resource call (does not work -> event loop); should inspect more precisely the framework, it seems that it can be very cool for microservices as verticles !
+	- add Facebook auth : manual, so should be ok... Not tested
 
-- sparkjava
+- sparkjava + unirest
 	- add https server
 	- add dependency injection
 	- add rest resources

@@ -15,14 +15,32 @@
 */
 package io.github.cdelmas.spike.vertx.hello;
 
+import io.github.cdelmas.spike.common.domain.Car;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 public class HelloResource {
 
+    private final RemoteCarService carService;
+
+    public HelloResource(RemoteCarService carService) {
+        this.carService = carService;
+    }
+
     public void hello(RoutingContext routingContext) {
+        List<Car> cars = carService.all();
+
         HttpServerResponse response = routingContext.response();
         response.putHeader("content-type", "test/plain");
-        response.end("Hello World from Vert.x-Web!");
+        Buffer responseBuffer = Buffer.buffer();
+        responseBuffer
+                .appendString(cars.stream().map(Car::getName).collect(toList()).toString())
+                .appendString(", and then Hello World from Vert.x-Web!");
+        response.end(responseBuffer);
     }
 }

@@ -20,6 +20,7 @@ import io.github.cdelmas.spike.common.persistence.InMemoryCarRepository;
 import io.github.cdelmas.spike.vertx.car.CarResource;
 import io.github.cdelmas.spike.vertx.car.CarsResource;
 import io.github.cdelmas.spike.vertx.hello.HelloResource;
+import io.github.cdelmas.spike.vertx.hello.RemoteCarService;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
@@ -30,6 +31,10 @@ import io.vertx.ext.web.handler.BodyHandler;
 public class Main {
 
     public static void main(String[] args) {
+        // TODO start a vertx instance
+        // deploy verticles / one per resource in this case
+        // use the event bus to communicate
+
         Vertx vertx = Vertx.vertx();
         HttpServerOptions serverOptions = new HttpServerOptions()
                 .setSsl(true)
@@ -40,8 +45,9 @@ public class Main {
         HttpServer server = vertx.createHttpServer(serverOptions);
         Router router = Router.router(vertx);
 
-        HelloResource helloResource = new HelloResource();
-        router.get("/hello").produces("text/plain").handler(helloResource::hello);
+        RemoteCarService carService = new RemoteCarService();
+        HelloResource helloResource = new HelloResource(carService);
+        router.get("/hello").produces("text/plain").blockingHandler(helloResource::hello);
 
         CarRepository carRepository = new InMemoryCarRepository();
         CarsResource carsResource = new CarsResource(carRepository);
