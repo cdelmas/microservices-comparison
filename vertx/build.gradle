@@ -12,7 +12,3 @@ jar {
         attributes 'Main-Class': 'io.github.cdelmas.spike.vertx.Main'
     }
 }
-
-shadowJar {
-    mergeServiceFiles()
-}

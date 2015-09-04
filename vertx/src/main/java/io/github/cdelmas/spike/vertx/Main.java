@@ -15,15 +15,18 @@
 */
 package io.github.cdelmas.spike.vertx;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import io.github.cdelmas.spike.common.domain.CarRepository;
 import io.github.cdelmas.spike.common.persistence.InMemoryCarRepository;
 import io.github.cdelmas.spike.vertx.car.CarResource;
 import io.github.cdelmas.spike.vertx.car.CarsResource;
 import io.github.cdelmas.spike.vertx.hello.HelloResource;
-import io.github.cdelmas.spike.vertx.hello.RemoteCarService;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.json.Json;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -33,21 +36,21 @@ public class Main {
     public static void main(String[] args) {
         // TODO start a vertx instance
         // deploy verticles / one per resource in this case
-        // use the event bus to communicate
+
+        Json.mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
         Vertx vertx = Vertx.vertx();
-        HttpServerOptions serverOptions = new HttpServerOptions()
-                .setSsl(true)
-                .setKeyStoreOptions(new JksOptions()
-                        .setPath(System.getProperty("javax.net.ssl.keyStorePath"))
-                        .setPassword(System.getProperty("javax.net.ssl.keyStorePassword")))
-                .setPort(8090);
-        HttpServer server = vertx.createHttpServer(serverOptions);
-        Router router = Router.router(vertx);
 
-        RemoteCarService carService = new RemoteCarService();
-        HelloResource helloResource = new HelloResource(carService);
-        router.get("/hello").produces("text/plain").blockingHandler(helloResource::hello);
+        HttpClientOptions clientOptions = new HttpClientOptions()
+                .setSsl(true)
+                .setTrustStoreOptions(new JksOptions()
+                        .setPath(System.getProperty("javax.net.ssl.trustStore"))
+                        .setPassword(System.getProperty("javax.net.ssl.trustStorePassword")));
+        HttpClient httpClient = vertx.createHttpClient(clientOptions);
+
+        HelloResource helloResource = new HelloResource(httpClient);
+        Router router = Router.router(vertx);
+        router.get("/hello").produces("text/plain").handler(helloResource::hello);
 
         CarRepository carRepository = new InMemoryCarRepository();
         CarsResource carsResource = new CarsResource(carRepository);
@@ -58,6 +61,13 @@ public class Main {
         CarResource carResource = new CarResource(carRepository);
         router.get("/cars/:id").produces("application/json").handler(carResource::byId);
 
+        HttpServerOptions serverOptions = new HttpServerOptions()
+                .setSsl(true)
+                .setKeyStoreOptions(new JksOptions()
+                        .setPath(System.getProperty("javax.net.ssl.keyStorePath"))
+                        .setPassword(System.getProperty("javax.net.ssl.keyStorePassword")))
+                .setPort(8090);
+        HttpServer server = vertx.createHttpServer(serverOptions);
         server.requestHandler(router::accept).listen();
     }
 }
