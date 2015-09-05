@@ -41,3 +41,15 @@ project(':vertx') {
         compile project(':common')
     }
 }
+
+project(':spring-boot') {
+    dependencies {
+        compile project(':common')
+    }
+}
+
+project(':sparkjava') {
+    dependencies {
+        compile project(':common')
+    }
+}

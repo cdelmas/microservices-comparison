@@ -1,0 +1,27 @@
+buildscript {
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+    }
+}
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '1.2.2'
+}
+
+apply plugin: 'spring-boot'
+
+dependencies {
+
+    compile ("org.springframework.boot:spring-boot-starter-web") {
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    compile("org.springframework.boot:spring-boot-starter-jetty")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile 'org.springframework.hateoas:spring-hateoas:0.19.0.RELEASE'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'io.github.cdelmas.spike.springboot.Main'
+    }
+}
