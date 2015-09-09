@@ -16,20 +16,27 @@
 package io.github.cdelmas.spike.vertx;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import io.github.cdelmas.spike.common.domain.Car;
 import io.github.cdelmas.spike.common.domain.CarRepository;
 import io.github.cdelmas.spike.common.persistence.InMemoryCarRepository;
 import io.github.cdelmas.spike.vertx.car.CarResource;
 import io.github.cdelmas.spike.vertx.car.CarsResource;
 import io.github.cdelmas.spike.vertx.hello.HelloResource;
+import io.github.cdelmas.spike.vertx.infrastructure.auth.BearerAuthHandler;
+import io.github.cdelmas.spike.vertx.infrastructure.auth.FacebookOauthTokenVerifier;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.Json;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.AuthHandler;
 import io.vertx.ext.web.handler.BodyHandler;
+
+import static java.util.stream.Collectors.toList;
 
 public class Main {
 
@@ -48,9 +55,22 @@ public class Main {
                         .setPassword(System.getProperty("javax.net.ssl.trustStorePassword")));
         HttpClient httpClient = vertx.createHttpClient(clientOptions);
 
-        HelloResource helloResource = new HelloResource(httpClient);
+
         Router router = Router.router(vertx);
-        router.get("/hello").produces("text/plain").handler(helloResource::hello);
+        AuthHandler auth = new BearerAuthHandler(new FacebookOauthTokenVerifier());
+        router.route("/*").handler(auth);
+
+        HelloResource helloResource = new HelloResource(httpClient);
+        router.get("/hello").produces("text/plain").handler(routingContext ->
+                helloResource.hello(
+                        routingContext::user,
+                        cars ->
+                                routingContext.response()
+                                        .putHeader("content-type", "test/plain")
+                                        .setChunked(true)
+                                        .write(cars.stream().map(Car::getName).collect(toList()).toString())
+                                        .write(", and then Hello World from Vert.x-Web!")
+                                        .end()));
 
         CarRepository carRepository = new InMemoryCarRepository();
         CarsResource carsResource = new CarsResource(carRepository);

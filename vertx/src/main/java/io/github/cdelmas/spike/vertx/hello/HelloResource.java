@@ -16,14 +16,18 @@
 package io.github.cdelmas.spike.vertx.hello;
 
 import io.github.cdelmas.spike.common.domain.Car;
+import io.github.cdelmas.spike.vertx.infrastructure.auth.MyUser;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
+import io.vertx.ext.auth.User;
 import io.vertx.ext.web.RoutingContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -37,19 +41,15 @@ public class HelloResource {
         this.httpClient = httpClient;
     }
 
-    public void hello(RoutingContext routingContext) {
+    public void hello(Supplier<User> userSupplier, Consumer<List<Car>> responseHandler) {
 
         httpClient.getAbs("https://localhost:8090/cars")
                 .putHeader("Accept", "application/json")
+                .putHeader("Authorization", "Bearer " + userSupplier.get().principal().getString("token"))
                 .handler(response ->
                         response.bodyHandler(buffer -> {
                             List<Car> cars = new ArrayList<>(asList(Json.decodeValue(buffer.toString(), Car[].class)));
-                            routingContext.response()
-                                    .putHeader("content-type", "test/plain")
-                                    .setChunked(true)
-                                    .write(cars.stream().map(Car::getName).collect(toList()).toString())
-                                    .write(", and then Hello World from Vert.x-Web!")
-                                    .end();
+                            responseHandler.accept(cars);
                         }))
                 .end();
     }
