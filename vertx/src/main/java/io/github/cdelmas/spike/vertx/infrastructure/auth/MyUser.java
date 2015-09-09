@@ -10,10 +10,12 @@ import io.vertx.ext.auth.AuthProvider;
 public class MyUser extends AbstractUser {
 
     private AuthProvider authProvider;
+    private final int id;
     private final String name;
     private final String token;
 
-    public MyUser(String name, String token) {
+    public MyUser(int id, String name, String token) {
+        this.id = id;
         this.name = name;
         this.token = token;
     }
@@ -25,7 +27,7 @@ public class MyUser extends AbstractUser {
 
     @Override
     public JsonObject principal() {
-        return new JsonObject().put("name", name).put("token", token);
+        return new JsonObject().put("id", id).put("name", name).put("token", token);
     }
 
     @Override

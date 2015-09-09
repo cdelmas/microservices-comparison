@@ -27,7 +27,6 @@ import io.github.cdelmas.spike.vertx.infrastructure.auth.FacebookOauthTokenVerif
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
-import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.Json;
@@ -55,9 +54,8 @@ public class Main {
                         .setPassword(System.getProperty("javax.net.ssl.trustStorePassword")));
         HttpClient httpClient = vertx.createHttpClient(clientOptions);
 
-
         Router router = Router.router(vertx);
-        AuthHandler auth = new BearerAuthHandler(new FacebookOauthTokenVerifier());
+        AuthHandler auth = new BearerAuthHandler(new FacebookOauthTokenVerifier(httpClient));
         router.route("/*").handler(auth);
 
         HelloResource helloResource = new HelloResource(httpClient);
