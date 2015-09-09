@@ -1,18 +1,22 @@
 TODO list
+
 - common
 	- add a README
 	- add a test client
 
 - restlet
+	- metrics
 	
 - dropwizard
+	- metrics
 
 - spring boot
 	- add https server
 	- add Facebook auth
+	- metrics
 
 - vertx
-	- add Facebook auth 
+	- metrics
 
 - sparkjava + unirest
 	- add https server
@@ -23,4 +27,5 @@ TODO list
 	- add Facebook auth
 	- add links in representations
 	- add links in list representation
+	- metrics
 
