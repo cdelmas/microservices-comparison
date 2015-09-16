@@ -4,3 +4,9 @@ server:
     key-store: /home/cyril/Work/localhost.jks
     key-store-password: louise
     keyAlias: localhost
+
+spring:
+  oauth2:
+    resource:
+      userInfoUri: https://graph.facebook.com/v2.4/me
+      preferTokenInfo: false

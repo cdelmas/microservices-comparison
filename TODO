@@ -11,7 +11,7 @@ TODO list
 	- metrics
 
 - spring boot
-	- add Facebook auth
+	- add Facebook auth (test only)
 	- metrics
 
 - vertx

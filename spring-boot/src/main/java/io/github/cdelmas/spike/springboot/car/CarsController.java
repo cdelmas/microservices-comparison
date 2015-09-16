@@ -2,6 +2,7 @@ package io.github.cdelmas.spike.springboot.car;
 
 import io.github.cdelmas.spike.common.domain.Car;
 import io.github.cdelmas.spike.common.domain.CarRepository;
+import org.springframework.cloud.security.oauth2.resource.EnableOAuth2Resource;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+@EnableOAuth2Resource
 @RestController
 @RequestMapping(value = "/cars", produces = "application/json")
 public class CarsController {
