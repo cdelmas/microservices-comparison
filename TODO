@@ -11,7 +11,6 @@ TODO list
 	- metrics
 
 - spring boot
-	- add https server
 	- add Facebook auth
 	- metrics
 
@@ -20,7 +19,6 @@ TODO list
 
 - sparkjava + unirest
 	- add https server
-	- add dependency injection
 	- add rest resources
 	- add Location header
 	- add resource call

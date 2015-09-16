@@ -19,7 +19,7 @@ public class SampleController {
     String home() {
 
         RestTemplate rest = new RestTemplate();
-        List<Car> cars = asList(rest.getForObject("http://localhost:8080/cars", Car[].class));
+        List<Car> cars = asList(rest.getForObject("https://localhost:8443/cars", Car[].class));
 
         return "Hello World! " + cars.stream().map(Car::getName).collect(toList());
     }

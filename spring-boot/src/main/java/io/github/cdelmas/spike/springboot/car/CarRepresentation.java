@@ -10,4 +10,8 @@ public class CarRepresentation extends ResourceSupport {
     public CarRepresentation(Car car) {
         this.name = car.getName();
     }
+
+    public String getName() {
+        return name;
+    }
 }

@@ -1,0 +1,6 @@
+server:
+  port: 8443
+  ssl:
+    key-store: /home/cyril/Work/localhost.jks
+    key-store-password: louise
+    keyAlias: localhost
