@@ -6,16 +6,20 @@ TODO list
 
 - restlet
 	- metrics
+	- Exception Mapper
 	
 - dropwizard
 	- metrics
+	- Exception Mapper
 
 - spring boot
 	- add Facebook auth (test only)
 	- metrics
+	- Exception Mapper
 
 - vertx
 	- metrics
+	- Exception Mapper
 
 - sparkjava + unirest
 	- add https server
@@ -26,4 +30,5 @@ TODO list
 	- add links in representations
 	- add links in list representation
 	- metrics
+	- Exception Mapper
 
