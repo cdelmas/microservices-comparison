@@ -15,12 +15,18 @@
 */
 package io.github.cdelmas.spike.sparkjava;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.cdelmas.spike.common.domain.Car;
 import io.github.cdelmas.spike.common.domain.CarRepository;
+import io.github.cdelmas.spike.common.hateoas.Link;
 import io.github.cdelmas.spike.common.persistence.InMemoryCarRepository;
 
+import java.io.IOException;
 import java.util.List;
 
+import static io.github.cdelmas.spike.common.hateoas.Link.self;
+import static java.util.stream.Collectors.toList;
 import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.SparkBase.port;
@@ -30,20 +36,33 @@ public class Main {
         port(8099); // defaults on 4567
         get("/hello", (request, response) -> "Hello World");
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
         CarRepository carRepository = new InMemoryCarRepository();
         get("/cars", "application/json", (request, response) -> {
             List<Car> cars = carRepository.all();
             response.header("count", String.valueOf(cars.size()));
             response.type("application/json");
-            return cars;
-        });
+            return cars.stream().map(c -> {
+                        CarRepresentation carRepresentation = new CarRepresentation(c);
+                        carRepresentation.addLink(self(request.url() + "/" + c.getId()));
+                        return carRepresentation;
+                    }
+            ).collect(toList());
+        }, objectMapper::writeValueAsString);
 
-//        post("/cars", "application/json", (request, response) -> {
-//            request.
-//            List<Car> cars = carRepository.all();
-//            response.header("count", String.valueOf(cars.size()));
-//            return cars;
-//        });
+        post("/cars", "application/json", (request, response) -> {
+            Car car = null;
+            try {
+                car = objectMapper.readValue(request.body(), Car.class);
+                carRepository.save(car);
+                response.header("Location", request.url() + "/" + car.getId());
+            } catch (IOException e) {
+                response.status(400);
+            }
+            return "";
+        });
 
 
     }
