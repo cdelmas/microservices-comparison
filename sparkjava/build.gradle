@@ -1,0 +1,14 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '1.2.2'
+}
+
+dependencies {
+    compile 'com.sparkjava:spark-core:2.2'
+
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'io.github.cdelmas.spike.sparkjava.Main'
+    }
+}
