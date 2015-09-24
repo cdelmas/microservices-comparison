@@ -22,7 +22,6 @@ TODO list
 	- Exception Mapper
 
 - sparkjava + unirest
-	- add https server
 	- add Facebook auth
 	- metrics
 	- Exception Mapper

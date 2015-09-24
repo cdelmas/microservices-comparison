@@ -40,40 +40,17 @@ import static java.util.stream.Collectors.toList;
 import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.SparkBase.port;
+import static spark.SparkBase.secure;
 
 public class Main {
     public static void main(String[] args) {
         port(8099); // defaults on 4567
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.getSerializerProvider().setNullValueSerializer(new JsonSerializer<Object>() {
-            @Override
-            public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
-            }
-        });
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-
-        Unirest.setObjectMapper(new com.mashape.unirest.http.ObjectMapper() {
-            @Override
-            public <T> T readValue(String value, Class<T> valueType) {
-                try {
-                    return objectMapper.readValue(value, valueType);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            }
-
-            @Override
-            public String writeValue(Object value) {
-                try {
-                    return objectMapper.writeValueAsString(value);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+        ObjectMapper objectMapper = createObjectMapper();
+        configureUnirest(objectMapper);
+        secureServer();
 
         get("/hello", (request, response) -> {
-                    HttpResponse<Car[]> carHttpResponse = Unirest.get("http://localhost:8099/cars")
+                    HttpResponse<Car[]> carHttpResponse = Unirest.get("https://localhost:8099/cars")
                             .header("Accept", "application/json")
                             .asObject(Car[].class);
                     Car[] cars = carHttpResponse.getBody();
@@ -83,7 +60,6 @@ public class Main {
                     return "We have these cars available: " + carNames;
                 }
         );
-
 
         CarRepository carRepository = new InMemoryCarRepository();
         get("/cars", "application/json", (request, response) -> {
@@ -125,6 +101,46 @@ public class Main {
             return "";
         });
 
+    }
 
+    private static void secureServer() {
+        String keystoreFile = System.getProperty("javax.net.ssl.keyStorePath");
+        String keystorePassword = System.getProperty("javax.net.ssl.keyStorePassword");
+        String truststoreFile = System.getProperty("javax.net.ssl.trustStore");
+        String truststorePassword = System.getProperty("javax.net.ssl.trustStorePassword");
+        secure(keystoreFile, keystorePassword, truststoreFile, truststorePassword);
+    }
+
+    private static void configureUnirest(final ObjectMapper objectMapper) {
+        Unirest.setObjectMapper(new com.mashape.unirest.http.ObjectMapper() {
+            @Override
+            public <T> T readValue(String value, Class<T> valueType) {
+                try {
+                    return objectMapper.readValue(value, valueType);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+
+            @Override
+            public String writeValue(Object value) {
+                try {
+                    return objectMapper.writeValueAsString(value);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
+
+    private static ObjectMapper createObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.getSerializerProvider().setNullValueSerializer(new JsonSerializer<Object>() {
+            @Override
+            public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+            }
+        });
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        return objectMapper;
     }
 }
