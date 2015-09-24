@@ -15,9 +15,13 @@
 */
 package io.github.cdelmas.spike.sparkjava;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import io.github.cdelmas.spike.common.domain.Car;
@@ -29,6 +33,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static io.github.cdelmas.spike.common.hateoas.Link.self;
 import static java.util.stream.Collectors.toList;
@@ -40,6 +45,11 @@ public class Main {
     public static void main(String[] args) {
         port(8099); // defaults on 4567
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.getSerializerProvider().setNullValueSerializer(new JsonSerializer<Object>() {
+            @Override
+            public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+            }
+        });
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
         Unirest.setObjectMapper(new com.mashape.unirest.http.ObjectMapper() {
@@ -86,6 +96,20 @@ public class Main {
                         return carRepresentation;
                     }
             ).collect(toList());
+        }, objectMapper::writeValueAsString);
+
+        get("/cars/:id", "application/json", (request, response) -> {
+            Optional<Car> car = carRepository.byId(Integer.parseInt(request.params(":id")));
+            return car.map(c -> {
+                        response.type("application/json");
+                        CarRepresentation carRepresentation = new CarRepresentation(c);
+                        carRepresentation.addLink(self(request.url()));
+                        return carRepresentation;
+                    }
+            ).orElseGet(() -> {
+                response.status(404);
+                return null;
+            });
         }, objectMapper::writeValueAsString);
 
         post("/cars", "application/json", (request, response) -> {
