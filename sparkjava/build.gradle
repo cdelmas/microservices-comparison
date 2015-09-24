@@ -5,6 +5,7 @@ plugins {
 dependencies {
     compile 'com.sparkjava:spark-core:2.2'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.6.2'
+    compile 'com.mashape.unirest:unirest-java:1.4.7'
 }
 
 jar {

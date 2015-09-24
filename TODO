@@ -23,12 +23,8 @@ TODO list
 
 - sparkjava + unirest
 	- add https server
-	- add rest resources
-	- add Location header
-	- add resource call
 	- add Facebook auth
 	- add links in representations
-	- add links in list representation
 	- metrics
 	- Exception Mapper
 

@@ -1,22 +1,14 @@
-buildscript {
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
-    }
-}
-
 plugins {
     id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
 
-apply plugin: 'spring-boot'
-
 dependencies {
 
-    compile ("org.springframework.boot:spring-boot-starter-web") {
+    compile ('org.springframework.boot:spring-boot-starter-web:1.2.6.RELEASE') {
         exclude module: "spring-boot-starter-tomcat"
     }
-    compile 'org.springframework.boot:spring-boot-starter-jetty'
-    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-jetty:1.2.6.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-actuator:1.2.6.RELEASE'
     compile 'org.springframework.hateoas:spring-hateoas:0.19.0.RELEASE'
     compile 'org.springframework.security.oauth:spring-security-oauth2:2.0.7.RELEASE'
     compile 'org.springframework.cloud:spring-cloud-security:1.0.2.RELEASE'
