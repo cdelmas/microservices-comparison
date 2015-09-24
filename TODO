@@ -24,7 +24,6 @@ TODO list
 - sparkjava + unirest
 	- add https server
 	- add Facebook auth
-	- add links in representations
 	- metrics
 	- Exception Mapper
 
