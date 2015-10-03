@@ -6,22 +6,17 @@ TODO list
 
 - restlet
 	- metrics
-	- Exception Mapper
 	
 - dropwizard
 	- metrics
-	- Exception Mapper
 
 - spring boot
 	- metrics
-	- Exception Mapper
 
 - vertx
 	- metrics
-	- Exception Mapper
 
 - sparkjava + unirest
 	- add Facebook auth
 	- metrics
-	- Exception Mapper
 
