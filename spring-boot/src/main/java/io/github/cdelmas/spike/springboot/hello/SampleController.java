@@ -17,6 +17,12 @@ package io.github.cdelmas.spike.springboot.hello;
 
 import io.github.cdelmas.spike.common.domain.Car;
 import org.springframework.cloud.security.oauth2.resource.EnableOAuth2Resource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,10 +39,16 @@ public class SampleController {
 
     @RequestMapping("/")
     @ResponseBody
-    String home() {
+    String home(@RequestHeader("Authorization") String authToken) {
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Accept", "application/json");
+        headers.add("Authorization", authToken);
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(null, headers);
 
         RestTemplate rest = new RestTemplate();
-        List<Car> cars = asList(rest.getForObject("https://localhost:8443/cars", Car[].class));
+        ResponseEntity<Car[]> responseEntity = rest.exchange("https://localhost:8443/cars", HttpMethod.GET, requestEntity, Car[].class);
+        List<Car> cars = asList(responseEntity.getBody());
 
         return "Hello World! " + cars.stream().map(Car::getName).collect(toList());
     }

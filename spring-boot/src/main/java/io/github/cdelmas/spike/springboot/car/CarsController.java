@@ -57,18 +57,24 @@ public class CarsController {
         List<Car> cars = carRepository.all();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("total-count", String.valueOf(cars.size()));
-        return new ResponseEntity<>(cars.stream().map(CarRepresentation::new).collect(toList()), responseHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(cars.stream().map(this::toCarRepresentation).collect(toList()), responseHeaders, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<CarRepresentation> byId(@PathVariable("id") String carId) {
         Optional<Car> car = carRepository.byId(Integer.parseInt(carId));
         return car.map(c -> {
-            CarRepresentation rep = new CarRepresentation(c);
-            rep.add(linkTo(methodOn(CarsController.class).byId(carId)).withSelfRel());
+            CarRepresentation rep = toCarRepresentation(c);
             return new ResponseEntity<>(rep, HttpStatus.OK);
         })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    private CarRepresentation toCarRepresentation(Car c) {
+        String carId = String.valueOf(c.getId());
+        CarRepresentation rep = new CarRepresentation(c);
+        rep.add(linkTo(methodOn(CarsController.class).byId(carId)).withSelfRel());
+        return rep;
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
