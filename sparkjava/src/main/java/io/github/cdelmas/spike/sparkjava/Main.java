@@ -20,14 +20,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
+import io.github.cdelmas.spike.common.auth.AccessTokenVerificationCommandFactory;
+import io.github.cdelmas.spike.common.auth.User;
 import io.github.cdelmas.spike.common.domain.Car;
 import io.github.cdelmas.spike.common.domain.CarRepository;
-import io.github.cdelmas.spike.common.hateoas.Link;
 import io.github.cdelmas.spike.common.persistence.InMemoryCarRepository;
+import javaslang.control.Try;
+import spark.Request;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -37,7 +39,9 @@ import java.util.Optional;
 
 import static io.github.cdelmas.spike.common.hateoas.Link.self;
 import static java.util.stream.Collectors.toList;
+import static spark.Spark.before;
 import static spark.Spark.get;
+import static spark.Spark.halt;
 import static spark.Spark.post;
 import static spark.SparkBase.port;
 import static spark.SparkBase.secure;
@@ -49,9 +53,21 @@ public class Main {
         configureUnirest(objectMapper);
         secureServer();
 
+        AccessTokenVerificationCommandFactory accessTokenVerificationCommandFactory = new AccessTokenVerificationCommandFactory();
+
+        before((request, response) -> {
+            String token = readToken(request);
+            Try<User> user = accessTokenVerificationCommandFactory.createVerificationCommand(token).executeCommand();
+            user.peek(u ->
+                    request.attribute("user", u))
+                    .orElseRun(e -> halt(401, "{\"error\":\"" + e.getMessage() + "\"}"));
+        });
+
         get("/hello", (request, response) -> {
+                    String token = readToken(request);
                     HttpResponse<Car[]> carHttpResponse = Unirest.get("https://localhost:8099/cars")
                             .header("Accept", "application/json")
+                            .header("Authorization", "Bearer " + token)
                             .asObject(Car[].class);
                     Car[] cars = carHttpResponse.getBody();
                     List<String> carNames = Arrays.stream(cars)
@@ -101,6 +117,11 @@ public class Main {
             return "";
         });
 
+    }
+
+    private static String readToken(Request request) {
+        String authorization = request.headers("Authorization");
+        return authorization.substring(authorization.indexOf(' ') + 1);
     }
 
     private static void secureServer() {
