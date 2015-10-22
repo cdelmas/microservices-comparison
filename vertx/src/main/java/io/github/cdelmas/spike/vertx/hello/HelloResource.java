@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static java.util.Arrays.asList;
+import static java.util.Arrays.toString;
 import static java.util.stream.Collectors.toList;
 
 public class HelloResource {
@@ -41,15 +42,19 @@ public class HelloResource {
         this.httpClient = httpClient;
     }
 
-    public void hello(Supplier<User> userSupplier, Consumer<List<Car>> responseHandler) {
-
+    public void hello(RoutingContext routingContext) {
         httpClient.getAbs("https://localhost:8090/cars")
                 .putHeader("Accept", "application/json")
-                .putHeader("Authorization", "Bearer " + userSupplier.get().principal().getString("token"))
+                .putHeader("Authorization", "Bearer " + routingContext.user().principal().getString("token"))
                 .handler(response ->
                         response.bodyHandler(buffer -> {
                             List<Car> cars = new ArrayList<>(asList(Json.decodeValue(buffer.toString(), Car[].class)));
-                            responseHandler.accept(cars);
+                            routingContext.response()
+                                    .putHeader("content-type", "test/plain")
+                                    .setChunked(true)
+                                    .write(cars.stream().map(Car::getName).collect(toList()).toString())
+                                    .write(", and then Hello World from Vert.x-Web!")
+                                    .end();
                         }))
                 .end();
     }

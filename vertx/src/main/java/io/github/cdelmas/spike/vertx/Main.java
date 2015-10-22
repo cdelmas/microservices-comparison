@@ -59,16 +59,7 @@ public class Main {
         router.route("/*").handler(auth);
 
         HelloResource helloResource = new HelloResource(httpClient);
-        router.get("/hello").produces("text/plain").handler(routingContext ->
-                helloResource.hello(
-                        routingContext::user,
-                        cars ->
-                                routingContext.response()
-                                        .putHeader("content-type", "test/plain")
-                                        .setChunked(true)
-                                        .write(cars.stream().map(Car::getName).collect(toList()).toString())
-                                        .write(", and then Hello World from Vert.x-Web!")
-                                        .end()));
+        router.get("/hello").produces("text/plain").handler(helloResource::hello);
 
         CarRepository carRepository = new InMemoryCarRepository();
         CarsResource carsResource = new CarsResource(carRepository);
