@@ -43,7 +43,7 @@ public class DropwizardApplication extends Application<DropwizardServerConfigura
         environment.jersey().register(guiceBundle.getInjector().getInstance(CarsResource.class));
         environment.jersey().register(guiceBundle.getInjector().getInstance(CarResource.class));
         environment.jersey().register(AuthFactory.binder(
-                new OAuthFactory<User>(guiceBundle.getInjector().getInstance(FacebookTokenAuthenticator.class),
+                new OAuthFactory<>(guiceBundle.getInjector().getInstance(FacebookTokenAuthenticator.class),
                         getName() + "-Realm",
                         User.class)));
     }
