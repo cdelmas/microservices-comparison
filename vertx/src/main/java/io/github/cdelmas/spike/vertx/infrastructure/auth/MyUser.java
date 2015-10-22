@@ -25,11 +25,11 @@ import io.vertx.ext.auth.AuthProvider;
 public class MyUser extends AbstractUser {
 
     private AuthProvider authProvider;
-    private final int id;
+    private final long id;
     private final String name;
     private final String token;
 
-    public MyUser(int id, String name, String token) {
+    public MyUser(long id, String name, String token) {
         this.id = id;
         this.name = name;
         this.token = token;
