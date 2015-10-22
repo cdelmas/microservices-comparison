@@ -49,8 +49,9 @@ public class FacebookOauthTokenVerifier implements AuthProvider {
                                                 json.getString("name"),
                                                 token)));
                             }
-                        }).exceptionHandler(error ->
-                                resultHandler.handle(Future.failedFuture(error.getMessage()))))
+                        }))
+                .exceptionHandler(error ->
+                        resultHandler.handle(Future.failedFuture(error.getMessage())))
                 .end();
     }
 
