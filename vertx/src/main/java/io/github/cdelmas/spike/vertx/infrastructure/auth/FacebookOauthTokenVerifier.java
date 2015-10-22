@@ -19,6 +19,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.User;
@@ -38,10 +39,14 @@ public class FacebookOauthTokenVerifier implements AuthProvider {
         httpClient.getAbs("https://graph.facebook.com:443/v2.4/me?access_token=" + token)
                 .handler(response ->
                         response.bodyHandler(buffer -> {
-                            JsonObject userCredentials = new JsonObject(buffer.toString());
+                            JsonObject json = new JsonObject(buffer.toString());
+                            if (response.statusCode() != 200) {
+                                String message = json.getJsonObject("error").getString("message");
+                                resultHandler.handle(Future.failedFuture(message));
+                            }
                             resultHandler.handle(Future.succeededFuture(
-                                    new MyUser(Integer.parseInt(userCredentials.getString("id")),
-                                            userCredentials.getString("name"),
+                                    new MyUser(Integer.parseInt(json.getString("id")),
+                                            json.getString("name"),
                                             token)));
                         }).exceptionHandler(error ->
                                 resultHandler.handle(Future.failedFuture(error.getMessage()))))
