@@ -48,13 +48,22 @@ public class HelloResource {
                 .putHeader("Authorization", "Bearer " + routingContext.user().principal().getString("token"))
                 .handler(response ->
                         response.bodyHandler(buffer -> {
-                            List<Car> cars = new ArrayList<>(asList(Json.decodeValue(buffer.toString(), Car[].class)));
-                            routingContext.response()
-                                    .putHeader("content-type", "test/plain")
-                                    .setChunked(true)
-                                    .write(cars.stream().map(Car::getName).collect(toList()).toString())
-                                    .write(", and then Hello World from Vert.x-Web!")
-                                    .end();
+                            if (response.statusCode() == 200) {
+                                List<Car> cars = new ArrayList<>(asList(Json.decodeValue(buffer.toString(), Car[].class)));
+                                routingContext.response()
+                                        .putHeader("content-type", "test/plain")
+                                        .setChunked(true)
+                                        .write(cars.stream().map(Car::getName).collect(toList()).toString())
+                                        .write(", and then Hello World from Vert.x-Web!")
+                                        .end();
+                            } else {
+                                routingContext.response()
+                                        .setStatusCode(response.statusCode())
+                                        .putHeader("content-type", "test/plain")
+                                        .setChunked(true)
+                                        .write("Oops, something went wrong: " + response.statusMessage())
+                                        .end();
+                            }
                         }))
                 .end();
     }
