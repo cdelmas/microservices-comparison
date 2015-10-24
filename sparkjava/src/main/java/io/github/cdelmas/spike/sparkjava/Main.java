@@ -24,18 +24,15 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import io.github.cdelmas.spike.common.auth.AccessTokenVerificationCommandFactory;
-import io.github.cdelmas.spike.common.auth.User;
 import io.github.cdelmas.spike.common.domain.Car;
 import io.github.cdelmas.spike.common.domain.CarRepository;
 import io.github.cdelmas.spike.common.persistence.InMemoryCarRepository;
-import javaslang.control.Try;
 import spark.Request;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static io.github.cdelmas.spike.common.hateoas.Link.self;
 import static java.util.stream.Collectors.toList;
@@ -54,75 +51,20 @@ public class Main {
         secureServer();
 
         AccessTokenVerificationCommandFactory accessTokenVerificationCommandFactory = new AccessTokenVerificationCommandFactory();
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(accessTokenVerificationCommandFactory);
+        before(authenticationFilter::filter);
 
-        before((request, response) -> {
-            String token = readToken(request);
-            Try<User> user = accessTokenVerificationCommandFactory.createVerificationCommand(token).executeCommand();
-            user.peek(u ->
-                    request.attribute("user", u))
-                    .orElseRun(e -> halt(401, "{\"error\":\"" + e.getMessage() + "\"}"));
-        });
-
-        get("/hello", (request, response) -> {
-                    String token = readToken(request);
-                    HttpResponse<Car[]> carHttpResponse = Unirest.get("https://localhost:8099/cars")
-                            .header("Accept", "application/json")
-                            .header("Authorization", "Bearer " + token)
-                            .asObject(Car[].class);
-                    Car[] cars = carHttpResponse.getBody();
-                    List<String> carNames = Arrays.stream(cars)
-                            .map(Car::getName)
-                            .collect(toList());
-                    return "We have these cars available: " + carNames;
-                }
-        );
+        HelloResource helloResource = new HelloResource();
+        get("/hello", helloResource::hello);
 
         CarRepository carRepository = new InMemoryCarRepository();
-        get("/cars", "application/json", (request, response) -> {
-            List<Car> cars = carRepository.all();
-            response.header("count", String.valueOf(cars.size()));
-            response.type("application/json");
-            return cars.stream().map(c -> {
-                        CarRepresentation carRepresentation = new CarRepresentation(c);
-                        carRepresentation.addLink(self(request.url() + "/" + c.getId()));
-                        return carRepresentation;
-                    }
-            ).collect(toList());
-        }, objectMapper::writeValueAsString);
-
-        get("/cars/:id", "application/json", (request, response) -> {
-            Optional<Car> car = carRepository.byId(Integer.parseInt(request.params(":id")));
-            return car.map(c -> {
-                        response.type("application/json");
-                        CarRepresentation carRepresentation = new CarRepresentation(c);
-                        carRepresentation.addLink(self(request.url()));
-                        return carRepresentation;
-                    }
-            ).orElseGet(() -> {
-                response.status(404);
-                return null;
-            });
-        }, objectMapper::writeValueAsString);
-
-        post("/cars", "application/json", (request, response) -> {
-            Car car = null;
-            try {
-                car = objectMapper.readValue(request.body(), Car.class);
-                carRepository.save(car);
-                response.header("Location", request.url() + "/" + car.getId());
-                response.status(201);
-            } catch (IOException e) {
-                response.status(400);
-            }
-            return "";
-        });
-
+        CarsResource carsResource = new CarsResource(carRepository, objectMapper);
+        get("/cars", "application/json", carsResource::all, objectMapper::writeValueAsString);
+        get("/cars/:id", "application/json", carsResource::byId, objectMapper::writeValueAsString);
+        post("/cars", "application/json", carsResource::createCar);
     }
 
-    private static String readToken(Request request) {
-        String authorization = request.headers("Authorization");
-        return authorization.substring(authorization.indexOf(' ') + 1);
-    }
+
 
     private static void secureServer() {
         String keystoreFile = System.getProperty("javax.net.ssl.keyStorePath");
