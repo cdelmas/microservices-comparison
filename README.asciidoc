@@ -1,0 +1,14 @@
+= Microservices libraries comparison
+
+== Purpose
+
+This project is the companion of this Blog article: http://cdelmas.github.io/.....
+
+== Build
+
+To build it, just run `gradle shadowJar` in the command line.
+
+== Run
+
+Then you can run each server using `java -jar <server>.jar`.
+
