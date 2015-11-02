@@ -4,11 +4,27 @@
 
 This project is the companion of this Blog article: https://cdelmas.github.io/2015/11/01/A-comparison-of-Microservices-Frameworks.html.
 
+== Setup
+
+You will need a keystore. You can follow a tutorial http://restlet.com/technical-resources/restlet-framework/guide/2.3/core/security/https[here] to set up a keystore with a self-signed certificate.
+
+One of the client libraries requires you to import the Facebook's certificate into the truststore. To do that, you can follow these http://stackoverflow.com/questions/373295/digital-certificate-how-to-import-cer-file-in-to-truststore-file-using[instructions].
+
 == Build
 
-To build it, just run `gradle shadowJar` in the command line.
+To build the servers, just run `gradlew shadowJar` in the command line. By the way, you need a JDK 8, but I guess you're up-to-date :)
 
 == Run
 
-Then you can run each server using `java -jar <server>.jar`.
+Then you can run each server using `java -Djavax.net.ssl.trustStore=/path/to/trustStore.jks -Djavax.net.ssl.trustStorePassword=thepass -Djavax.net.ssl.keyStorePassword=thePass -Djavax.net.ssl.keyStorePath=/path/to/keyStore.jks -jar <server>.jar`. Don't forget to replace `<server>` with the correct jar name. 
+
+The Dropwizard server needs a special command line: `java ... -jar dropwizard.jar server /path/to/dropwizard-server.yml`.
+
+== Notes
+
+There are no unit tests, and it is fully assumed.
+
+== The missing guys
+
+In a future version, I will add Restx, Payara and Swarm to the comparison. It is a long exercise though, but stay in touch ;)
 
