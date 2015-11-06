@@ -31,6 +31,7 @@ public class BearerAuthHandler extends AuthHandlerImpl {
     @Override
     public void handle(RoutingContext routingContext) {
         HttpServerRequest request = routingContext.request();
+        request.pause();
         String authorization = request.headers().get(HttpHeaders.AUTHORIZATION);
         if (authorization == null) {
             routingContext.fail(401);
@@ -50,6 +51,7 @@ public class BearerAuthHandler extends AuthHandlerImpl {
                     authProvider.authenticate(credentials, res -> {
                         if (res.succeeded()) {
                             routingContext.setUser(res.result());
+                            request.resume();
                             routingContext.next();
                         } else {
                             routingContext.fail(401);
